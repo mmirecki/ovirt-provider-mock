@@ -20,8 +20,8 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 import signal
 #import ConfigParser
-from handler_get_token import GetTokenHandler
-from handler_test_connection import TestConnectionHandler
+from handler_keystone import GetTokenHandler
+from handler_neutron import TestConnectionHandler
 
 #config = ConfigParser.RawConfigParser()
 #config.read('ConfigFile.properties')

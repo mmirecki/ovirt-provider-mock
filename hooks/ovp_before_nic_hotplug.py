@@ -25,13 +25,6 @@ XML1 = """
 </interface>
 """
 
-XML2 = """<?xml version="1.0" encoding="utf-8"?>
-    <interface type="bridge">
-        <mac address="00:1a:4a:16:01:51"/>
-        <model type="virtio"/>
-        <source bridge="sample_network"/>
-    </interface>"""
-
 
 def main():
     provider_type = os.environ[PROVIDER_TYPE_KEY]
@@ -106,23 +99,6 @@ def get_all_bridges():
     bridge_lines = filter(lambda bridge_tokens: len(bridge_tokens) > 1, tokenized_lines)
     bridge_names = map(lambda tokens: tokens[0], bridge_lines)
     return bridge_names
-
-"""
-def addLinuxBridgeVnic(domxml, iface, portId):
-    defineLinuxBridge(domxml, iface, portId, DUMMY_BRIDGE)
-
-def defineLinuxBridge(domxml, iface, portId, brName):
-    target = domxml.createElement('target')
-    target.setAttribute('dev', devName('tap', portId))
-    iface.appendChild(target)
-
-    source = iface.getElementsByTagName('source')[0]
-    source.setAttribute('bridge', brName)
-
-
-def devName(prefix, name):
-    return (prefix + name)[:7]
-"""
 
 
 main()

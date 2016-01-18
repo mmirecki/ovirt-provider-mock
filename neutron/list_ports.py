@@ -6,14 +6,13 @@ class ListPorts(ResponseBase):
     def path(self):
         return 'ports'
 
-"""
-identified in ovirt by: device_id
-deleted by: id
-"""
+    """
+    identified in ovirt by: device_id
+    Check how port is created in update_ports.py
+    """
 
     def response(self, path):
         return """
-
 {"ports":
  [
    {

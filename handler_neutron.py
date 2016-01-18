@@ -22,7 +22,12 @@ class TestConnectionHandler(BaseHTTPRequestHandler):
                          "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
 
         self.end_headers()
-        self.wfile.write(response.response(path))
+        result = response.response(path)
+        print("path: " + str(path))
+
+        print("RESULT: " + str(response))
+
+        self.wfile.write(result)
 
         return
 
@@ -49,7 +54,7 @@ class TestConnectionHandler(BaseHTTPRequestHandler):
                          "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
 
         self.end_headers()
-        self.wfile.write(response.response(path))
+        self.wfile.write(response.response(path, content))
 
         return
 

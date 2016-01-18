@@ -1,12 +1,19 @@
-from neutron.base import ResponseBase
+from neutron.base import PostResponseBase
+import json
 
 
-class UpdatePorts(ResponseBase):
+class UpdatePorts(PostResponseBase):
 
     def path(self):
         return 'ports'
 
-    def response(self, path):
+    def response(self, path, content):
+
+        content_json = json.loads(content)
+
+        # This is the device id which will be used to identify this port in
+        # subsequent requests
+        print("Port device id: " + str(content_json['port']['device_id']))
         return """
 {
     "port":

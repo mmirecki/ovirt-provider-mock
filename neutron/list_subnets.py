@@ -55,6 +55,4 @@ class ListSubnets(ResponseBase):
         "subnetpool_id": null
     }
 ]}
-
-
-    """
+"""

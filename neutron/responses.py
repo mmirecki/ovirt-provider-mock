@@ -26,7 +26,7 @@ response_networks = ListNetworks()
 get_responses[response_networks.path()] = response_networks
 
 response_subnets = ListSubnets()
-get_responses[response_subnets.path()] = response_default
+get_responses[response_subnets.path()] = response_subnets
 
 
 ports = ShowPorts()

@@ -1,91 +1,92 @@
 from BaseHTTPServer import BaseHTTPRequestHandler
+from neutron.responses import get_responses
+from neutron.responses import post_responses
+
 
 class TestConnectionHandler(BaseHTTPRequestHandler):
-    
+
     def do_GET(self):
+        print("GET:  " + self.path)
+
+        path = self.parse_request_path(self.path)
+        response_key = self.parse_response_key(path)
+        response = get_responses.get(response_key)
+        if not response:
+            self.send_response(400)
+            self.wfile.write("Incorrect path")
+            return
+
         self.send_response(200)
-        self.send_header("Content-Type", "Application/json")
-        self.send_header("x-openstack-request-id", "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
+        self.send_header("Content-Type", "application/json")
+        self.send_header("x-openstack-request-id",
+                         "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
 
         self.end_headers()
-        
-        if self.path == "" or self.path == "/" or self.path == "/v2.0" or self.path == "/v2.0/":
-            self.wfile.write(self.response_string_default)
-        elif self.path == "/v2.0/networks" or self.path == "/v2.0/networks/":
-            self.wfile.write(self.response_string_networks)
-            
+        self.wfile.write(response.response(path))
+
         return
 
+    # this is a duplicate of do_GET
+    # I'm not exctracting a comon function, because for now it is easier
+    # to debug like this
+    def do_POST(self):
+        print("POST:  " + self.path)
+        content_length = int(self.headers['Content-Length'])
+        content = self.rfile.read(content_length)
+        print(content)
 
-    response_string_default = """
-{
-    "resources": 
-    [{
-        "links": [{
-            "href": "http://192.168.120.151:9696/v2.0/subnets", 
-            "rel": "self"
-        }], 
-        "name": "subnet", 
-        "collection": "subnets"
-    }, 
-    {
-        "links": [{
-            "href": "http://192.168.120.151:9696/v2.0/subnetpools", 
-            "rel": "self"
-        }], 
-        "name": "subnetpool", 
-        "collection": "subnetpools"
-    }, 
-    {
-        "links": [{
-            "href": "http://192.168.120.151:9696/v2.0/networks", 
-            "rel": "self"
-        }], 
-        "name": "network", 
-        "collection": "networks"
-    },
-    {
-         "links": [{
-             "href": "http://192.168.120.151:9696/v2.0/ports", 
-             "rel": "self"
-        }], 
-        "name": "port", 
-        "collection": "ports"
-    }]
-}
-"""
+        path = self.parse_request_path(self.path)
+        response_key = self.parse_response_key(path)
+        response = post_responses.get(response_key)
+        if not response:
+            self.send_response(400)
+            self.wfile.write("Incorrect path")
+            return
 
-    response_string_networks="""
-{
-    "networks": [
-        {
-            "status": "ACTIVE", 
-            "subnets": ["dc594048-a9e2-4ec9-9928-4157cea7e530"], 
-            "name": "public", 
-            "provider:physical_network": null, 
-            "admin_state_up": true, 
-            "tenant_id": "547deac3d7f64e2688de188365a139aa", 
-            "mtu": 0, 
-            "router:external": true, 
-            "shared": false, 
-            "provider:network_type": "vxlan", 
-            "id": "bf864bf3-81d8-438d-bf68-4b0c357309b3", 
-            "provider:segmentation_id": 35
-        }, 
-        {
-            "status": "ACTIVE", 
-            "subnets": ["6ed90628-5d9c-4eae-8665-0b2420e683d4"], 
-            "name": "private", 
-            "provider:physical_network": null, 
-            "admin_state_up": true, 
-            "tenant_id": "472beee27f704a5b8a6f3a15fdac7ba5", 
-            "mtu": 0, 
-            "router:external": false, 
-            "shared": false, 
-            "provider:network_type": "vxlan", 
-            "id": "59b48a4c-893c-47d2-9df3-84102329bbb9", 
-            "provider:segmentation_id": 56
-        }
-    ]
-}
-"""
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("x-openstack-request-id",
+                         "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
+
+        self.end_headers()
+        self.wfile.write(response.response(path))
+
+        return
+
+    def do_PUT(self):
+        print("PUT:  " + self.path)
+
+    def do_DELETE(self):
+        print("DELETE:  " + self.path)
+        self.send_header("x-openstack-request-id",
+                         "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
+
+        self.end_headers()
+
+        path = self.parse_request_path(self.path)
+        response_key = self.parse_response_key(path)
+        response = get_responses.get(response_key)
+        if not response:
+            self.send_response(400)
+            self.wfile.write("Incorrect path")
+            return
+
+        self.send_response(204)
+        self.wfile.write(response.response(path))
+
+        return
+
+    """
+    The request path looks like: "/v2.0/*" example: "/v2.0/networks".
+    We are only interested in the * part
+    """
+    def parse_request_path(self, full_path):
+        if len(full_path) < 6:
+            return None
+        return full_path[6:]
+
+    def parse_response_key(self, path):
+        slash_index = str.find(path, "/")
+        if slash_index < 0:
+            return path
+        return path[:slash_index+1]

@@ -1,73 +1,57 @@
 #!/usr/bin/python
 import os
-import sys
-import traceback
 from xml.dom import minidom
 import hooking
 from vdsm.netinfo import DUMMY_BRIDGE
-import subprocess
-
+from vdsm.network.configurators import libvirt
+from vdsm import netinfo
 
 VNIC_ID_KEY = 'vnic_id'
 PROVIDER_TYPE_KEY = 'provider_type'
 OPENSTACK_NET_PROVIDER_TYPE = 'OPENSTACK_NETWORK'
-BRIDGE_INTERFACE = 'ens11'
-
-XML1 = """
-<interface type="bridge">
-    <address bus="0x00" domain="0x0000" function="0x0" slot="0x0a" type="pci"/>
-    <mac address="00:1a:4a:16:01:56"/>
-    <model type="virtio"/>
-    <source bridge="public"/>
-    <filterref filter="vdsm-no-mac-spoofing"/>
-    <link state="up"/>
-    <bandwidth/>
-</interface>
-"""
 
 
 def main():
-    provider_type = os.environ[PROVIDER_TYPE_KEY]
+    provider_type = os.environ.get(PROVIDER_TYPE_KEY, None)
     if not provider_type or provider_type != OPENSTACK_NET_PROVIDER_TYPE:
         return
 
-    vnic_id = os.environ[VNIC_ID_KEY]
+    vnic_id = os.environ.get(VNIC_ID_KEY, None)
     if not vnic_id:
         return
 
     domxml = hooking.read_domxml()
 
-    result_domxml = connect_nic(domxml, vnic_id, provider_type)
+    connect_to_new_network(domxml, vnic_id, provider_type)
+    #connect_to_existing_network(domxml)
 
-    hooking.write_domxml(result_domxml)
-
-
-def test():
-    result_domxml = connect_nic(minidom.parseString(XML1), '', '')
-    print(result_domxml)
+    hooking.write_domxml(domxml)
 
 
-def connect_nic(domxml, vnic_id, provider_type):
+def connect_to_new_network(domxml, vnic_id, provider_type):
 
-    add_and_connect_to_new_network(domxml)
-
-    return domxml
-
-
-def add_and_connect_to_new_network(domxml):
     iface = domxml.getElementsByTagName('interface')[0]
     source = iface.getElementsByTagName('source')[0]
     bridge_name = source.getAttribute('bridge')
+
+    add_bridge(bridge_name)
+    add_libvirt_network(bridge_name)
+
+
+def add_libvirt_network(bridge_name):
+    net = libvirt.getNetworkDef("public")
+    if not net:
+        net_xml = "<network><name>" + netinfo.LIBVIRT_NET_PREFIX + \
+            bridge_name + \
+            "</name><forward mode='bridge' /><bridge name='" + bridge_name +\
+            "' /></network>"
+        libvirt.createNetwork(net_xml)
+
+
+def add_bridge(bridge_name):
     if not does_bridge_exist(bridge_name):
-        add_bridge(bridge_name)
+        create_bridge(bridge_name)
 
-
-def connect_to_existing_network(domxml):
-    source_bridge = DUMMY_BRIDGE
-
-    iface = domxml.getElementsByTagName('interface')[0]
-    source = iface.getElementsByTagName('source')[0]
-    bridge_name = source.setAttribute('bridge', source_bridge)
 
 """
 Not persistant
@@ -83,9 +67,9 @@ def run(cmd):
     return out
 
 
-def add_bridge(bridge_name):
+def create_bridge(bridge_name):
     run(['/sbin/brctl', 'addbr', bridge_name])
-    run(['/sbin/brctl', 'addif', bridge_name, BRIDGE_INTERFACE])
+    run(['/sbin/brctl', 'addif', bridge_name, "ens11"])
 
 
 def does_bridge_exist(bridge_name):
@@ -94,12 +78,19 @@ def does_bridge_exist(bridge_name):
 
 def get_all_bridges():
     process_output = run(['brctl', 'show'])
-    output_lines = process_output.splitlines()[1:]
+    output_lines = process_output[1:]
     tokenized_lines = map(str.split, output_lines)
-    bridge_lines = filter(lambda bridge_tokens: len(bridge_tokens) > 1, tokenized_lines)
+    bridge_lines = filter(lambda bridge_tokens: len(bridge_tokens) > 1,
+                          tokenized_lines)
     bridge_names = map(lambda tokens: tokens[0], bridge_lines)
     return bridge_names
 
 
+def connect_to_existing_network(domxml):
+    source_bridge = DUMMY_BRIDGE
+
+    iface = domxml.getElementsByTagName('interface')[0]
+    source = iface.getElementsByTagName('source')[0]
+    bridge_name = source.setAttribute('bridge', source_bridge)
+
 main()
-#test()

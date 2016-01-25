@@ -2,7 +2,7 @@ from neutron.base import PostResponseBase
 import json
 
 
-class UpdatePorts(PostResponseBase):
+class UpdateSubnets(PostResponseBase):
 
     def path(self):
         return 'subnets'
@@ -11,9 +11,6 @@ class UpdatePorts(PostResponseBase):
 
         content_json = json.loads(content)
 
-        # This is the device id which will be used to identify this port in
-        # subsequent requests
-        print("Port device id: " + str(content_json['port']['device_id']))
         return """
 {
     "subnet":

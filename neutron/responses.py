@@ -9,6 +9,7 @@ from neutron.show_ports import ShowPorts
 from neutron.show_subnets import ShowSubnets
 
 from neutron.update_ports import UpdatePorts
+from neutron.update_subnets import UpdateSubnets
 
 
 get_responses = dict()
@@ -41,3 +42,6 @@ get_responses[subnets.path()] = subnets
 
 ports = UpdatePorts()
 post_responses[ports.path()] = ports
+
+subnets = UpdateSubnets()
+post_responses[subnets.path()] = subnets

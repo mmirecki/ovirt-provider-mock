@@ -25,7 +25,7 @@ class TestConnectionHandler(BaseHTTPRequestHandler):
         result = response.response(path)
         print("path: " + str(path))
 
-        print("RESULT: " + str(response))
+        print("RESPONSE: " + str(response))
 
         self.wfile.write(result)
 
@@ -38,12 +38,14 @@ class TestConnectionHandler(BaseHTTPRequestHandler):
         print("POST:  " + self.path)
         content_length = int(self.headers['Content-Length'])
         content = self.rfile.read(content_length)
+        print("Body:")
         print(content)
 
         path = self.parse_request_path(self.path)
         response_key = self.parse_response_key(path)
         response = post_responses.get(response_key)
         if not response:
+            print("No such response")
             self.send_response(400)
             self.wfile.write("Incorrect path")
             return
@@ -54,7 +56,10 @@ class TestConnectionHandler(BaseHTTPRequestHandler):
                          "req-edf1f07f-1ccf-4d42-a073-b2bd99bb9f4a")
 
         self.end_headers()
-        self.wfile.write(response.response(path, content))
+        response_content = response.response(path, content)
+        print("RESPONSE:")
+        print(response_content)
+        self.wfile.write(response_content)
 
         return
 

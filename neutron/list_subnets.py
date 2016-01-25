@@ -53,6 +53,31 @@ class ListSubnets(ResponseBase):
         "cidr": "172.24.4.224/28",
         "id": "dc594048-a9e2-4ec9-9928-4157cea7e530",
         "subnetpool_id": null
+    },
+        {
+        "name": "public_subnet2",
+        "enable_dhcp": true,
+        "network_id": "bf864bf3-81d8-438d-bf68-4b0c357309b3",
+        "tenant_id": "547deac3d7f64e2688de188365a139aa",
+        "dns_nameservers": ["192.168.100.2"],
+        "gateway_ip": "192.168.100.1",
+        "ipv6_ra_mode": null,
+        "allocation_pools":
+        [
+            {
+                "start": "172.24.4.226",
+                "end": "172.24.4.238"
+            }
+        ],
+        "host_routes": [],
+        "ip_version": 4,
+        "ipv6_address_mode": null,
+        "cidr": "192.168.100.0/24",
+        "id": "dc594048-a9e2-4ec9-9928-4157cea7e530",
+        "subnetpool_id": null
     }
+
+
+
 ]}
 """

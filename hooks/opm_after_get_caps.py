@@ -21,6 +21,30 @@ does not exist)
 """
 
 networks[network_name] = {
+    "iface": network_name
+}
+
+bridges[network_name] = {
+    "ports": [nic_name]
+}
+
+nic = nics.get(nic_name, None)
+if nic:  # if the nic exists, do nothing
+    nics[nic_name]["ports"] = [nic_name]
+else:  # if the nic does not exist, add it to the results
+    nics[nic_name] = {}
+
+hooking.write_json(caps)
+hooking.exit_hook("", return_code=0)
+
+
+"""
+In case you need to pass more information about the above configuration items,
+below is a more complete configuration:
+"""
+
+
+networks[network_name] = {
     "iface": network_name,
     "addr": "",
     "cfg":
@@ -105,13 +129,6 @@ bridges[network_name] = {
     "ports": [nic_name]
 }
 
-nic = nics.get(nic_name, None)
-
-if nic:
-    nics[nic_name]["ports"] = [nic_name]
-    hooking.write_json(caps)
-    hooking.exit_hook("", return_code=0)
-
 nics[nic_name] = {
     "addr": "",
     "cfg": {
@@ -134,5 +151,3 @@ nics[nic_name] = {
     "gateway": "",
     "speed": 0
 }
-
-hooking.write_json(caps)

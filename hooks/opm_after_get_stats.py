@@ -6,16 +6,11 @@ import time
 # If the interface is an existing device, the statistics will be present in the hook input data
 # An example for a device called "public"
 stats = hooking.read_json()
-device_name = "public"
-stats_for_device = stats["network"].get(device_name, None)
-
-if not stats_for_device:
-    hooking.exit_hook("", return_code=0)
 
 # If the statistics for the device are to be appended manually
 # An example for device "test"
 custom_stats = {
-    "test": {
+    "ens17": {
         "sampleTime": time.time(),
         "rxDropped": "0",
         "tx": "0",
@@ -26,8 +21,8 @@ custom_stats = {
         "rxRate": "0.0",
         "txErrors": "0",
         "state": "down",
-        "speed": "1000",
-        "name": "test"
+        "speed": "100",
+        "name": "ens17"
     }}
 
 stats['network'].update(custom_stats)

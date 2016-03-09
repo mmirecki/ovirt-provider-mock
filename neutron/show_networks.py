@@ -1,4 +1,7 @@
 from neutron.base import ResponseBase
+from neutron_data import networks
+import json
+import utils
 
 
 class ShowNetworks(ResponseBase):
@@ -7,21 +10,7 @@ class ShowNetworks(ResponseBase):
         return 'networks/'
 
     def response(self, path):
-        return """
-{
-    "network": {
-            "status": "ACTIVE",
-            "subnets": ["dc594048-a9e2-4ec9-9928-4157cea7e530"],
-            "name": "public",
-            "provider:physical_network": null,
-            "admin_state_up": true,
-            "tenant_id": "547deac3d7f64e2688de188365a139aa",
-            "mtu": 0,
-            "router:external": true,
-            "shared": false,
-            "provider:network_type": "vxlan",
-            "id": "bf864bf3-81d8-438d-bf68-4b0c357309b3",
-            "provider:segmentation_id": 35
-        }
-}
-"""
+        network_id = utils.get_id_from_path(path)
+
+        network = networks[network_id]
+        return json.dumps({'network': network})

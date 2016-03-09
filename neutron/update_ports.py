@@ -1,4 +1,5 @@
 from neutron.base import PostResponseBase
+from neutron_data import ports
 import json
 
 
@@ -11,52 +12,25 @@ class UpdatePorts(PostResponseBase):
 
         content_json = json.loads(content)
 
-        # This is the device id which will be used to identify this port in
-        # subsequent requests
-        print("Port device id: " + str(content_json['port']['device_id']))
-        return """
-{
-    "port":
-    {
-        "status": "DOWN",
-        "binding:host_id": "192.168.120.18-1ebb72",
-        "allowed_address_pairs": [],
-        "extra_dhcp_opts": [],
-        "device_owner": "oVirt",
-        "binding:profile": {},
-        "fixed_ips": [{
-            "subnet_id": "dc594048-a9e2-4ec9-9928-4157cea7e530",
-            "ip_address": "172.24.4.232"
-        }],
-        "id": "3c10bb5a-3d73-43a2-9c5a-9349d449e2a6",
-        "security_groups": ["9cca3bc4-416c-4815-b3d7-4ee81ab8bb97"],
-        "device_id": "7b2fa61c-2a88-424a-93b5-adc63328efe4",
-        "name": "nic2",
-        "admin_state_up": true,
-        "network_id": "bf864bf3-81d8-438d-bf68-4b0c357309b3",
-        "dns_name": "",
-        "binding:vif_details": {},
-        "binding:vnic_type": "normal",
-        "binding:vif_type": "binding_failed",
-        "tenant_id": "547deac3d7f64e2688de188365a139aa",
-        "mac_address": "00:1a:4a:16:01:53"
-    }
-}
-"""
+        received_port = content_json['port']
+        port = dict()
 
-"""
-Input:
+        #  The port id 'id' will be passed to the VIF driver as "vnic_id"
+        if getattr(received_port, 'id', None):  # existing port is updated
+            port_id = received_port['id']
+        else:  # if port has no id, create a new one
+            port_id = 'port_id_' + str(len(ports) + 1)
 
-{
-  "port" : {
-    "name" : "nic2",
-    "binding:host_id" : "192.168.120.18-1ebb72",
-    "admin_state_up" : true,
-    "device_id" : "7b2fa61c-2a88-424a-93b5-adc63328efe4",
-    "device_owner" : "oVirt",
-    "mac_address" : "00:1a:4a:16:01:53",
-    "network_id" : "bf864bf3-81d8-438d-bf68-4b0c357309b3",
-    "tenant_id" : "547deac3d7f64e2688de188365a139aa"
-  }
-}
-"""
+        # only copy the relevant keys, fail if any of them is missing
+        port['id'] = port_id
+        port['name'] = received_port['name']  # vm nic name (eg. ens3)
+        port['network_id'] = received_port['network_id']  # external network id
+        port['device_id'] = received_port['device_id']  # vm nic id
+        port['mac_address'] = received_port['mac_address']  # vm nic mac
+        port['device_owner'] = received_port['device_owner']  # always 'oVirt'
+        port['admin_state_up'] = received_port['admin_state_up']
+        port['binding:host_id'] = received_port['binding:host_id']
+
+        print "UPDATE PORT:" + str(port)
+        ports[port_id] = port
+        return json.dumps({'port': port})

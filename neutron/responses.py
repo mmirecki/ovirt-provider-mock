@@ -11,6 +11,10 @@ from neutron.show_subnets import ShowSubnets
 from neutron.update_ports import UpdatePorts
 from neutron.update_subnets import UpdateSubnets
 
+from neutron.delete_networks import DeleteNetworks
+from neutron.delete_ports import DeletePorts
+from neutron.delete_subnets import DeleteSubnets
+
 
 get_responses = dict()
 post_responses = dict()
@@ -30,18 +34,28 @@ response_subnets = ListSubnets()
 get_responses[response_subnets.path()] = response_subnets
 
 
-ports = ShowPorts()
-get_responses[ports.path()] = ports
+show_ports = ShowPorts()
+get_responses[show_ports.path()] = show_ports
 
-networks = ShowNetworks()
-get_responses[networks.path()] = networks
+show_networks = ShowNetworks()
+get_responses[show_networks.path()] = show_networks
 
-subnets = ShowSubnets()
-get_responses[subnets.path()] = subnets
+show_subnets = ShowSubnets()
+get_responses[show_subnets.path()] = show_subnets
 
 
-ports = UpdatePorts()
-post_responses[ports.path()] = ports
+update_ports = UpdatePorts()
+post_responses[update_ports.path()] = update_ports
 
-subnets = UpdateSubnets()
-post_responses[subnets.path()] = subnets
+update_subnets = UpdateSubnets()
+post_responses[update_subnets.path()] = update_subnets
+
+
+delete_networks = DeleteNetworks()
+delete_responses[delete_networks.path()] = delete_networks
+
+delete_ports = DeletePorts()
+delete_responses[delete_ports.path()] = delete_ports
+
+delete_subnets = DeleteSubnets()
+delete_responses[delete_subnets.path()] = delete_subnets

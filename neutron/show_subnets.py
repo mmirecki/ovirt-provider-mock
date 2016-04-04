@@ -7,7 +7,7 @@ import utils
 class ShowSubnets(ResponseBase):
 
     def path(self):
-        return 'subnets/'
+        return 'subnets'
 
     def response(self, path):
         subnet_id = utils.get_id_from_path(path)

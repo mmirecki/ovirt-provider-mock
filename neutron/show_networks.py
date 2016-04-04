@@ -7,7 +7,7 @@ import utils
 class ShowNetworks(ResponseBase):
 
     def path(self):
-        return 'networks/'
+        return 'networks'
 
     def response(self, path):
         network_id = utils.get_id_from_path(path)

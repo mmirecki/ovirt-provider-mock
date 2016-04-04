@@ -7,7 +7,7 @@ import utils
 class ShowPorts(ResponseBase):
 
     def path(self):
-        return 'ports/'
+        return 'ports'
 
     def response(self, path):
         port_id = utils.get_id_from_path(path)

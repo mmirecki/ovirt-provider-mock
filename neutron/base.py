@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import time
 
 
 class ResponseBase(object):
@@ -21,3 +22,6 @@ class PostResponseBase(object):
     @abstractmethod
     def response(self, path, content):
         pass
+
+    def generate_id(self):
+        return str(int(time.time()))

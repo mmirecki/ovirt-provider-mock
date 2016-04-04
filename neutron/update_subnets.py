@@ -1,7 +1,12 @@
 from neutron.base import PostResponseBase
 from neutron_data import subnets
 import json
+from utils import update_field_if_present
 
+
+# REST:
+# POST: http://localhost:9696/v2.0/subnets
+# {"subnet" :{"name": "subnet_name","network_id" : "network_id","ip_version" : "ip_version","cidr" : "cidr","gateway_ip" : "gateway_ip","dns_nameservers" : "dns_nameservers"}}
 
 class UpdateSubnets(PostResponseBase):
 
@@ -21,10 +26,11 @@ class UpdateSubnets(PostResponseBase):
         subnet['id'] = subnet_id
         subnet['name'] = received_subnet['name']
         subnet['network_id'] = received_subnet['network_id']
-        subnet['ip_version'] = received_subnet['ip_version']
         subnet['cidr'] = received_subnet['cidr']
-        subnet['gateway_ip'] = received_subnet['gateway_ip']
-        subnet['dns_nameservers'] = received_subnet['dns_nameservers']
+
+        update_field_if_present(subnet, received_subnet, 'ip_version')
+        update_field_if_present(subnet, received_subnet, 'gateway_ip')
+        update_field_if_present(subnet, received_subnet, 'dns_nameservers')
 
         print "UPDATE SUBNET:" + str(subnet)
 

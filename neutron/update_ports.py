@@ -2,6 +2,10 @@ from neutron.base import PostResponseBase
 from neutron_data import ports
 import json
 
+# REST:
+# POST: http://localhost:9696/v2.0/ports
+# { "port" : {"name" : "name","network_id" : "network_id","device_id" : "device_id","mac_address" : "mac_address","device_owner" : "device_owner","admin_state_up" : "admin_state_up","binding:host_id" : "binding:host_id"}}
+
 
 class UpdatePorts(PostResponseBase):
 

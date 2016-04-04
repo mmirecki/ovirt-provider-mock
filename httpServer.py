@@ -23,15 +23,22 @@ import signal
 from handler_keystone import GetTokenHandler
 from handler_neutron import TestConnectionHandler
 
+import ssl
+
 #config = ConfigParser.RawConfigParser()
 #config.read('ConfigFile.properties')
-   
+
 print 'Starting server, use <Ctrl-C> to stop'
-    
+
 server_get_token = HTTPServer(('localhost', 35357), GetTokenHandler)
+#Uncomment to use ssl
+#server_get_token.socket = ssl.wrap_socket (server_get_token.socket, certfile='/home/mmireck/projects/ovirt-provider-mock/server.pem', server_side=True)
 Thread(target=server_get_token.serve_forever).start()
 
 server_test_connection = HTTPServer(('localhost', 9696), TestConnectionHandler)
+#Uncomment to use ssl
+#server_test_connection.socket = ssl.wrap_socket (server_test_connection.socket, certfile='/home/mmireck/projects/ovirt-provider-mock/server.pem', server_side=True)
+
 Thread(target=server_test_connection.serve_forever).start()
 
 try:
@@ -40,7 +47,6 @@ except KeyboardInterrupt:
     pass
 
 print 'Shutting down'
-    
+
 server_get_token.shutdown()
 server_test_connection.shutdown()
-

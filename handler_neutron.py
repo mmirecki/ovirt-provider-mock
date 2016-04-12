@@ -116,6 +116,7 @@ class TestConnectionHandler(BaseHTTPRequestHandler):
             self.send_response(400)
             self.wfile.write("Incorrect path")
             return
+        response.response(path, None)
 
         self.send_response(204)
         self.send_header("x-openstack-request-id",

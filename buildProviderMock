@@ -1,0 +1,30 @@
+BUILDDIR=build
+NAME=provider-mock
+VERSION=0
+TARGETDIR=$BUILDDIR/$NAME-$VERSION
+
+RPMBUILDDIR=~/rpmbuild
+
+mkdir -p $TARGETDIR/opt/provider-mock
+mkdir -p $TARGETDIR/usr/bin
+
+cp providermock/run-provider-mock build/provider-mock-0/usr/bin/
+
+cp providermock/handler_keystone.py $TARGETDIR/opt/provider-mock/
+cp providermock/handler_neutron.py $TARGETDIR/opt/provider-mock/
+cp providermock/httpServer.py $TARGETDIR/opt/provider-mock/
+cp -r providermock/neutron $TARGETDIR/opt/provider-mock/
+
+cp providermock/Makefile $TARGETDIR/
+
+#cp providermock/provider-mock.spec $RPMBUILDDIR/SPECS
+cd $BUILDDIR
+tar -zcf $NAME.tar.gz provider-mock-0/
+
+cp $NAME.tar.gz $RPMBUILDDIR/SOURCES
+cd ..
+rpmbuild -ba providermock/provider-mock.spec
+
+echo "RPM ready: $RPMBUILDDIR/RPMS/$NAME-$VERSION.rpm"
+
+rm -rf ./$BUILDDIR

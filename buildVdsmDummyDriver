@@ -1,0 +1,54 @@
+BUILDDIR=build
+NAME=vdsmdummy-driver
+VERSION=0
+TARGETDIR=$BUILDDIR/$NAME-$VERSION
+
+HOOKSDIR=/usr/libexec/vdsm/hooks
+VIFDRIVERDIR=$HOOKSDIR/vifdriver
+
+RPMBUILDDIR=~/rpmbuild
+
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/vifdriver
+
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/after_get_caps
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/after_get_stats
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_device_create
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_device_destroy
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_device_migrate_destination
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_device_migrate_source
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_network_setup
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_nic_hotplug
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/before_nic_hotunplug
+
+cp vifdriver/vif_driver.py $TARGETDIR/$VIFDRIVERDIR/
+cp vifdriver/vif_driver_hooking.py $TARGETDIR/$VIFDRIVERDIR/
+cp vifdriver/vifdriver_implementations/vdsmdummy/vdsmdummy_driver.py $TARGETDIR/$VIFDRIVERDIR/
+cp vifdriver/vifdriver_implementations/vdsmdummy/vif_driver_config $TARGETDIR/$VIFDRIVERDIR/
+
+cp vifdriver/hooks/external_networks_after_get_caps.py $TARGETDIR/$HOOKSDIR/after_get_caps
+cp vifdriver/hooks/external_networks_after_get_stats.py $TARGETDIR/$HOOKSDIR/after_get_stats
+cp vifdriver/hooks/external_networks_before_device_create.py $TARGETDIR/$HOOKSDIR/before_device_create
+cp vifdriver/hooks/external_networks_before_device_destroy.py $TARGETDIR/$HOOKSDIR/before_device_destroy
+cp vifdriver/hooks/external_networks_before_migration_destination.py $TARGETDIR/$HOOKSDIR/before_device_migrate_destination
+cp vifdriver/hooks/external_networks_before_migration_source.py $TARGETDIR/$HOOKSDIR/before_device_migrate_source
+cp vifdriver/hooks/external_networks_before_network_setup.py $TARGETDIR/$HOOKSDIR/before_network_setup
+cp vifdriver/hooks/external_networks_before_nic_hotplug.py $TARGETDIR/$HOOKSDIR/before_nic_hotplug
+cp vifdriver/hooks/external_networks_before_nic_unplug.py $TARGETDIR/$HOOKSDIR/before_nic_hotunplug
+
+
+cp vifdriver/Makefile $TARGETDIR/
+
+cd $BUILDDIR
+tar -zcf $NAME.tar.gz vdsmdummy-driver-0/
+
+cp $NAME.tar.gz $RPMBUILDDIR/SOURCES
+cd ..
+rpmbuild -ba vifdriver/vdsmdummy-driver.spec
+
+echo "RPM ready: $RPMBUILDDIR/RPMS/$NAME-$VERSION.rpm"
+
+rm -rf ./$BUILDDIR
+
+
+
+

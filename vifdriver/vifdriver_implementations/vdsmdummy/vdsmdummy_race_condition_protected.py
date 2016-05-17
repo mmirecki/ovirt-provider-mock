@@ -1,5 +1,7 @@
 from vif_driver import VIFDriver
+import os
 import shutil
+from subprocess import call
 from vdsm.netinfo import DUMMY_BRIDGE
 
 VNIC_ID_KEY = 'vnic_id'
@@ -7,13 +9,13 @@ PROVIDER_TYPE_KEY = 'provider_type'
 EXTERNAL_NETWORK_PROVIDER_TYPE = 'EXTERNAL_NETWORK'
 
 
-class VdsmDummyVidDriver(VIFDriver):
+class ProtectedVdsmDummyVidDriver(VIFDriver):
 
     def after_device_destroy(self, environ, domxml):
         return domxml
 
     def after_device_create(self, environ, domxml):
-        return domxml
+        self.resume_paused_vm(environ)
 
     def after_network_setup(self, environ, json_content):
         return json_content
@@ -46,7 +48,9 @@ class VdsmDummyVidDriver(VIFDriver):
         return domxml
 
     def before_device_create(self, environ, domxml):
-        return self.attach_nic(environ, domxml)
+        result = self.attach_nic(environ, domxml)
+        self.add_launch_paused_flag(environ)
+        return result
 
     def before_device_destroy(self, environ, domxml):
         return domxml
@@ -73,3 +77,24 @@ class VdsmDummyVidDriver(VIFDriver):
         source = iface.getElementsByTagName('source')[0]
         bridge_name = source.setAttribute('bridge', source_bridge)
         return domxml
+
+    def add_launch_paused_flag(self, environ):
+        vm_id = environ['vmId']
+
+        flag_file_dir = "/var/run/vdsm/hook/" + vm_id
+        flag_file_name = flag_file_dir + "/launchflags"
+
+        try:
+            os.stat(flag_file_dir)
+        except:
+            os.makedirs(flag_file_dir)
+
+        with open(flag_file_name, mode='w') as file:
+            file.write('launchPaused 1')
+
+    def resume_paused_vm(self, environ):
+        provider_type = environ.get(PROVIDER_TYPE_KEY, None)
+        if not provider_type or provider_type != EXTERNAL_NETWORK_PROVIDER_TYPE:
+            return
+        call(['vdsClient', '-s', '0', 'continue',
+              'dde8f7cb-d309-43a7-b5fd-957068866607'])

@@ -1,0 +1,63 @@
+#!/bin/bash
+
+DRIVER_NAME=$1
+
+BUILDDIR=build
+NAME=${DRIVER_NAME}-driver
+VERSION=0
+TARGETDIR=$BUILDDIR/$NAME-$VERSION
+
+HOOKSDIR=usr/libexec/vdsm/hooks
+TARGET_VIFDRIVERDIR=$HOOKSDIR/vifdriver
+
+RPMBUILDDIR=~/rpmbuild
+
+HOOKS=(
+    'get_caps'
+    'get_stats'
+    'device_create'
+    'device_destroy'
+    'vm_migrate_destination'
+    'vm_migrate_source'
+    'nic_hotplug'
+    'nic_hotunplug'
+    'network_setup'
+    'vm_start'
+)
+
+PREFIXES=('before' 'after')
+
+rm -rf $TARGETDIR/usr/libexec/vdsm/hooks/*
+
+mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/vifdriver
+cp vifdriver/vif_driver.py $TARGETDIR/$TARGET_VIFDRIVERDIR/
+cp vifdriver/vif_driver_hooking.py $TARGETDIR/$TARGET_VIFDRIVERDIR/
+cp vifdriver/vifdriver_implementations/${DRIVER_NAME}/* $TARGETDIR/$TARGET_VIFDRIVERDIR/
+
+
+for prefix in "${PREFIXES[@]}"
+do
+    for hook in "${HOOKS[@]}"
+    do
+        hook_name=${prefix}_${hook}
+        echo ==== $hook_name ====
+        mkdir -p $TARGETDIR/usr/libexec/vdsm/hooks/${prefix}_${hook}
+        echo Create dir:    $TARGETDIR/usr/libexec/vdsm/hooks/$hook_name
+
+        cp vifdriver/hooks/external_networks_${hook_name}.py $TARGETDIR/$HOOKSDIR/${hook_name}
+        echo Copy:  cp vifdriver/hooks/external_networks_${prefix}_${hook}.py $TARGETDIR/$HOOKSDIR/${prefix}_${hook}
+    done
+done
+
+cp vifdriver/Makefile $TARGETDIR/
+
+cd $BUILDDIR
+tar -zcf $NAME.tar.gz vdsmdummy-driver-0/
+
+cp $NAME.tar.gz $RPMBUILDDIR/SOURCES
+cd ..
+rpmbuild -ba vifdriver/vdsmdummy-driver.spec
+
+echo "RPM ready: $RPMBUILDDIR/RPMS/$NAME-$VERSION.rpm"
+
+rm -rf ./$BUILDDIR

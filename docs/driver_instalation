@@ -1,0 +1,37 @@
+Virtual Interface Driver installation
+
+The virtual interface driver can be installed automatically by using the
+ovirt-host-deploy vdsm hook installation mechanism.
+This allows two basic ways of installation:
+- copy the hook files to the hooks directly on vdsm
+- install required rpm's by specifying the rpm's in a file
+
+
+Copying hook files.
+
+The ovirt-host-deploy vdsm hook will copy all files from
+/usr/share/ovirt-host-deploy/plugins/ovirt-host-deploy/vdsmhooks/hooks.d\
+on the engine, to the vdsm hook directly on the installed host (/usr/libexec/vdsm/hooks).
+
+
+Installing rpm's from list.
+
+A file with the list of rpm's to be installed must be placed in the
+following directory in the engine:
+/usr/share/ovirt-host-deploy/plugins/ovirt-host-deploy/vdsmhooks/packages.d\
+
+There should be a separate file for each linux distribution. The file extension 
+must be the name of the linux distribution on which the rpm's are to be installed
+(fedora, redhat, ...).
+
+For example:
+hooks.fedora
+-------------------
+vdsmdummy-driver.rpm
+other-driver.rpm
+
+
+Custom installation
+
+If a more sophisticated method of driver installation is required, a custom
+ovirt-host-deploy plugin must be added. An example will be prepared in the near future.

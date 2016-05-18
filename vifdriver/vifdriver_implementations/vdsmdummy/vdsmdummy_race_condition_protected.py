@@ -2,6 +2,7 @@ from vif_driver import VIFDriver
 import os
 import shutil
 import time
+import libvirt
 from subprocess import call
 from vdsm.netinfo import DUMMY_BRIDGE
 
@@ -91,7 +92,7 @@ class ProtectedVdsmDummyVidDriver(VIFDriver):
             os.makedirs(flag_file_dir)
 
         with open(flag_file_name, mode='w') as file:
-            file.write('launchPaused 1')
+            file.write(str(libvirt.VIR_DOMAIN_START_PAUSED))
 
     def resume_paused_vm(self, environ):
         provider_type = environ.get(PROVIDER_TYPE_KEY, None)

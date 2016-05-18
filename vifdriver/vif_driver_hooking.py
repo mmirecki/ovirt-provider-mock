@@ -41,6 +41,10 @@ def after_vm_start(environ, json_content):
     return vif_driver.after_vm_start(environ, json_content)
 
 
+def before_get_caps(environ, json_content):
+    return vif_driver.before_get_caps(environ, json_content)
+
+
 def before_get_stats(environ, json_content):
     return vif_driver.before_get_stats(environ, json_content)
 

@@ -1,6 +1,7 @@
 from vif_driver import VIFDriver
 import os
 import shutil
+import time
 from subprocess import call
 from vdsm.netinfo import DUMMY_BRIDGE
 
@@ -96,5 +97,8 @@ class ProtectedVdsmDummyVidDriver(VIFDriver):
         provider_type = environ.get(PROVIDER_TYPE_KEY, None)
         if not provider_type or provider_type != EXTERNAL_NETWORK_PROVIDER_TYPE:
             return
+        # Wait for some time until the nic is connected.
+        # This can be replaced by an implicit check if the nic is UP
+        time.sleep(15)
         call(['vdsClient', '-s', '0', 'continue',
-              'dde8f7cb-d309-43a7-b5fd-957068866607'])
+              environ['vmId']])

@@ -20,7 +20,7 @@ A file with the list of rpm's to be installed must be placed in the
 following directory in the engine:
 /usr/share/ovirt-host-deploy/plugins/ovirt-host-deploy/vdsmhooks/packages.d\
 
-There should be a separate file for each linux distribution. The file extension 
+There should be a separate file for each linux distribution. The file extension
 must be the name of the linux distribution on which the rpm's are to be installed
 (fedora, redhat, ...).
 
@@ -34,4 +34,41 @@ other-driver.rpm
 Custom installation
 
 If a more sophisticated method of driver installation is required, a custom
-ovirt-host-deploy plugin must be added. An example will be prepared in the near future.
+otopi plugin must be added.
+An example of such a plugin can be found in ./examples/driverdeploy
+The example contains a sample implementation of an otopi plugin.
+To add the plugin to the vdsm isntallation process, place the entire
+driverdeploy directory inside /usr/share/ovirt-host-deploy/plugins/ovirt-host-deploy
+on the oVirt engine. The plugin will be automatically copied to the vdsm being
+installed.
+Code inside the plugin can be executed during various stages of the installation
+process. The execution is controlled by means of the following annotation:
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+    )
+
+The 'stage' variable controlls at which stage of the installation process the
+annotated method will be executed. The available values are:
+
+        STAGE_BOOT,
+        STAGE_INIT,
+        STAGE_SETUP,
+        STAGE_INTERNAL_PACKAGES,
+        STAGE_PROGRAMS,
+        STAGE_LATE_SETUP,
+        STAGE_CUSTOMIZATION,
+        STAGE_VALIDATION,
+        STAGE_TRANSACTION_BEGIN,
+        STAGE_EARLY_MISC,
+        STAGE_PACKAGES,
+        STAGE_MISC,
+        STAGE_TRANSACTION_END,
+        STAGE_CLOSEUP,
+        STAGE_CLEANUP,
+        STAGE_PRE_TERMINATE,
+        STAGE_TERMINATE,
+        STAGE_REBOOT
+
+Along the plugin, any other files from the directory will be copied. This can
+include any binaries, rpms or any other files. The files can be then accessed
+by the plugin (as show in the example).

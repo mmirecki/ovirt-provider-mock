@@ -78,4 +78,4 @@ def before_network_setup(environ, json_content):
 
 
 def before_vm_start(environ, json_content):
-    return vif_driver.before_network_setup(environ, json_content)
+    return vif_driver.before_vm_start(environ, json_content)

@@ -4,7 +4,7 @@ import shutil
 import time
 import libvirt
 from subprocess import call
-from vdsm.netinfo import DUMMY_BRIDGE
+from vdsm.network.netinfo import DUMMY_BRIDGE
 
 VNIC_ID_KEY = 'vnic_id'
 PROVIDER_TYPE_KEY = 'provider_type'

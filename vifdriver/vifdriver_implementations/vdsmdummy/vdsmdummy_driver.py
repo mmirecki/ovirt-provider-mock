@@ -1,6 +1,6 @@
 from vif_driver import VIFDriver
 import shutil
-from vdsm.netinfo import DUMMY_BRIDGE
+from vdsm.network.netinfo import DUMMY_BRIDGE
 
 VNIC_ID_KEY = 'vnic_id'
 PROVIDER_TYPE_KEY = 'provider_type'

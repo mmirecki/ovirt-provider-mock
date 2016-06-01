@@ -7,7 +7,7 @@ PROVIDER_TYPE_KEY = 'provider_type'
 EXTERNAL_NETWORK_PROVIDER_TYPE = 'EXTERNAL_NETWORK'
 
 
-class VdsmDummyVidDriver(VIFDriver):
+class VdsmDummyVifDriver(VIFDriver):
 
     def after_device_destroy(self, environ, domxml):
         return domxml

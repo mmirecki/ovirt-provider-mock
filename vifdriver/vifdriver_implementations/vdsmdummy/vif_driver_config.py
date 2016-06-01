@@ -1,3 +1,3 @@
-from vdsmdummy_driver import VdsmDummyVidDriver
+from vdsmdummy_driver import VdsmDummyVifDriver
 
-vif_driver = VdsmDummyVidDriver()
+vif_driver = VdsmDummyVifDriver()

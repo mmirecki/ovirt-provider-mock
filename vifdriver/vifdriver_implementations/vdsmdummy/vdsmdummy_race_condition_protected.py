@@ -3,8 +3,10 @@ import os
 import shutil
 import time
 import libvirt
+import hooking
 from subprocess import call
 from vdsm.network.netinfo import DUMMY_BRIDGE
+from neutronclient.v2_0 import client
 
 VNIC_ID_KEY = 'vnic_id'
 PROVIDER_TYPE_KEY = 'provider_type'
@@ -35,6 +37,10 @@ class ProtectedVdsmDummyVidDriver(VIFDriver):
         return json_content
 
     def after_vm_start(self, environ, domxml):
+        vm_id = environ['vmId']
+        launch_flags = hooking.load_vm_launch_flags_from_file(vm_id)
+        if launch_flags == libvirt.VIR_DOMAIN_START_PAUSED:
+            self.resume_paused_vm(environ)
         return domxml
 
     def before_get_caps(self, environ, json_content):
@@ -103,3 +109,23 @@ class ProtectedVdsmDummyVidDriver(VIFDriver):
         time.sleep(15)
         call(['vdsClient', '-s', '0', 'continue',
               environ['vmId']])
+
+    def is_openstack_port_down(self, environ):
+
+        vnic_id = environ['vnic_id']
+        credentials = self.get_openstack_credentials()
+        neutron = client.Client(**credentials)
+        try:
+            port = neutron.show_port(vnic_id)
+            port_status = port['port']['status']
+            return port_status == "DOWN"
+        except:
+            return False
+
+    def get_openstack_credentials(self):
+        credentials = {}
+        credentials['username'] = 'admin'
+        credentials['password'] = 'f0d910204e194de7'
+        credentials['auth_url'] = 'http://192.168.120.151:5000/v2.0'
+        credentials['tenant_name'] = 'admin'
+        return credentials

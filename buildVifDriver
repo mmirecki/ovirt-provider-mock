@@ -45,7 +45,10 @@ do
         echo Create dir:    $TARGETDIR/usr/libexec/vdsm/hooks/$hook_name
 
         cp vifdriver/hooks/external_networks_${hook_name}.py $TARGETDIR/$HOOKSDIR/${hook_name}
-        echo Copy:  cp vifdriver/hooks/external_networks_${prefix}_${hook}.py $TARGETDIR/$HOOKSDIR/${prefix}_${hook}
+        echo Copy:  cp vifdriver/hooks/external_networks_${prefix}_${hook}.py $TARGETDIR/$HOOKSDIR/${prefix}_${hook}/
+        chmod 755 $TARGETDIR/$HOOKSDIR/${prefix}_${hook}/external_networks_${prefix}_${hook}.py
+        echo chmod 755 $TARGETDIR/$HOOKSDIR/${prefix}_${hook}/external_networks_${prefix}_${hook}.py
+
     done
 done
 
@@ -60,4 +63,4 @@ rpmbuild -ba vifdriver/vdsmdummy-driver.spec
 
 echo "RPM ready: $RPMBUILDDIR/RPMS/$NAME-$VERSION.rpm"
 
-rm -rf ./$BUILDDIR
+#rm -rf ./$BUILDDIR

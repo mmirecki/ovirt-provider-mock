@@ -1,0 +1,39 @@
+Starting provider mock
+----------------------
+
+If installing from the rpm, execute the following:
+    run-provider-mock
+
+If running from a git repository
+    cd providermock
+    python httpServer.py
+
+
+Solving connectivity problems
+-----------------------------
+
+The provider mock is using the following ports:
+  9696 - neutron mock
+  35357 - keystone mock
+
+Please ensure that these are accesible by oVirt.
+Firewalld, iptables or any other firewall must be checked if oVirt engine
+can not connect to the mock.
+These can either switched off:
+  service firewalld stop
+  service iptables stop
+or configured to allow traffic on these ports. The configuration will depend
+on the environment setup.
+The following command opens iptables on the ports required:
+  iptables -A INPUT -p tcp --dport 9696 -j ACCEPT
+  iptables -A INPUT -p tcp --dport 35357 -j ACCEPT
+Please consult the man pages for the specific configuration that suits your
+setup.
+
+
+Debuging
+---------------
+
+Issuing the follwing rest query:
+  http://<host>:9696/v2.0/debug
+will dump all the entities present in the mock.

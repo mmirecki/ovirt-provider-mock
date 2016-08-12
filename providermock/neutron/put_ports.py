@@ -1,4 +1,4 @@
-from neutron.base import PostResponseBase
+from neutron.base import ResponseBase
 from neutron_data import ports
 import json
 from utils import get_id_from_path
@@ -8,7 +8,7 @@ from utils import update_field_if_present
 # { "port" : {"name" : "name","network_id" : "network_id","device_id" : "device_id","mac_address" : "mac_address","device_owner" : "device_owner","admin_state_up" : "admin_state_up","binding:host_id" : "binding:host_id"}}
 
 
-class PutPorts(PostResponseBase):
+class PutPorts(ResponseBase):
 
     def path(self):
         return 'ports'

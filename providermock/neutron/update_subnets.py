@@ -1,4 +1,4 @@
-from neutron.base import PostResponseBase
+from neutron.base import ResponseBase
 from neutron_data import subnets
 import json
 from utils import update_field_if_present
@@ -8,7 +8,7 @@ from utils import update_field_if_present
 # POST: http://localhost:9696/v2.0/subnets
 # {"subnet" :{"name": "subnet_name","network_id" : "network_id","ip_version" : "ip_version","cidr" : "cidr","gateway_ip" : "gateway_ip","dns_nameservers" : "dns_nameservers"}}
 
-class UpdateSubnets(PostResponseBase):
+class UpdateSubnets(ResponseBase):
 
     def path(self):
         return 'subnets'

@@ -1,4 +1,4 @@
-from neutron.base import PostResponseBase
+from neutron.base import ResponseBase
 from neutron_data import networks
 import json
 
@@ -10,8 +10,7 @@ import json
 # "provider:network_type" : "vlan", "provider:segmentation_id" : 7}}
 
 
-
-class UpdateNetworks(PostResponseBase):
+class UpdateNetworks(ResponseBase):
 
     def path(self):
         return 'networks'

@@ -30,7 +30,7 @@ delete_responses = dict()
 put_responses = dict()
 
 debug = Debug()
-
+get_responses[debug.path()] = debug
 
 response_default = ListDefault()
 get_responses[response_default.path()] = response_default

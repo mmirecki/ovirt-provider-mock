@@ -9,18 +9,7 @@ class ResponseBase(object):
         pass
 
     @abstractmethod
-    def response(self, path):
-        pass
-
-
-class PostResponseBase(object):
-
-    @abstractmethod
-    def path(self):
-        pass
-
-    @abstractmethod
-    def response(self, path, content):
+    def response(self, path, content=None):
         pass
 
     def generate_id(self):

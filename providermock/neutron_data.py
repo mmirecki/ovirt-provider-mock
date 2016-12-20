@@ -30,4 +30,16 @@ subnets = {
 }
 
 
-ports = {}
+ports = {
+    'port_id_1': {
+        'id': 'port_id_1',
+        'name': 'dummy port',
+        'network_id': 'network_id_1',
+        'device_id': 'dummy port',
+        'mac_address': '00:00:00:00:00:00',
+        'device_owner': 'oVirt',
+        'admin_state_up': 'True',
+        'binding:host_id': 'binding_host_id'
+    }
+
+}

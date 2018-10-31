@@ -20,26 +20,16 @@ from __future__ import absolute_import
 
 from BaseHTTPServer import HTTPServer
 from threading import Thread
-import atexit
 import logging
-import logging.config
 import signal
 
 from keystone import TokenHandler
 from neutron import NeutronHandler
 
 
-LOG_CONFIG_FILE = 'logger.conf'
-
-
-def _init_logging():
-    logging.config.fileConfig(LOG_CONFIG_FILE)
-
-
 def main():
-    _init_logging()
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     logging.info('Starting server')
-
 
     server_keystone = HTTPServer(('', 35357), TokenHandler)
     Thread(target=server_keystone.serve_forever).start()

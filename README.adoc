@@ -1,0 +1,27 @@
+oVirt external provider mock
+=============================
+
+The oVirt external provider mock provides the minimal subset of the external
+provider REST APIs needed by the oVirt Engine / RHV-M to add the external
+provider and perform operations on it. The data provided here is hardcoded.
+
+Config
+------
+
+No configuration
+
+Running
+-------
+
+python2 providermock/commands_proxy.py
+
+Packaging
+---------
+
+The 'vdsm.spec' file demonstrates how to distribute VDSM as an RPM
+package.
+
+Licensing
+---------
+
+see COPYING

@@ -1,3 +1,10 @@
+The project has been moved!!! 
+=============================
+
+The project was moved to: https://github.com/ovirt/ovirt-provider-mock
+
+
+
 oVirt external provider mock
 =============================
 
